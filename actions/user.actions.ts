@@ -42,6 +42,7 @@ export async function getUserFromDb(email: string, password: string) {
         message: "Password is incorrect.",
       };
     }
+    existedUser.password = null;
 
     return {
       success: true,

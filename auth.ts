@@ -11,6 +11,8 @@ import Passkey from "next-auth/providers/passkey";
 import { v4 as uuid } from "uuid";
 import { getUserFromDb } from "./actions/user.actions";
 import { db } from "./lib/db";
+import { Session } from "next-auth";
+
 import {
   accountsTable,
   authenticatorsTable,
@@ -65,6 +67,16 @@ const authConfig: NextAuthConfig = {
     Passkey,
   ],
   callbacks: {
+    async session({ session }: { session: Session }) {
+      const user = session.user as { password?: string };
+
+      if (user.password) {
+        delete user.password;
+        console.log(session);
+      }
+
+      return session;
+    },
     async jwt({ token, user, account }) {
       if (account?.provider === "credentials") {
         token.credentials = true;
