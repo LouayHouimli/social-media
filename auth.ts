@@ -69,11 +69,7 @@ const authConfig: NextAuthConfig = {
   callbacks: {
     async session({ session }: { session: Session }) {
       const user = session.user as { password?: string };
-
-      if (user.password) {
-        delete user.password;
-        console.log(session);
-      }
+      delete user.password;
 
       return session;
     },
