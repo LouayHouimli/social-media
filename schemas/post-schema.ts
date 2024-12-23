@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+// Regex pattern to prevent HTML/Script tags and special characters
+const safeStringPattern = /^[^<>{}\\[\]]*$/;
+
 export const PostSchema = z.object({
   title: z
     .string()
@@ -8,6 +11,10 @@ export const PostSchema = z.object({
     })
     .max(50, {
       message: "Post title cant be more than 50 characters ",
+    })
+    .regex(safeStringPattern, {
+      message:
+        "Title contains invalid characters or potentially unsafe content",
     }),
   content: z
     .string()
@@ -16,5 +23,9 @@ export const PostSchema = z.object({
     })
     .max(150, {
       message: "Post title cant be more than 150 characters",
+    })
+    .regex(safeStringPattern, {
+      message:
+        "Content contains invalid characters or potentially unsafe content",
     }),
 });

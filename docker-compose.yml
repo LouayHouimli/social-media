@@ -3,13 +3,13 @@ services:
     image: postgres:latest
     restart: always
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=louay
+      - POSTGRES_PASSWORD=louay
       - POSTGRES_DB=nextauth_db
     ports:
       - "5433:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - nextauth_data:/var/lib/postgresql/data
 
 volumes:
-  postgres_data:
+  nextauth_data:

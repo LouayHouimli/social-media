@@ -9,6 +9,8 @@ import { HomeNav } from "@/components/home-nav";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ModeToggle } from "@/components/theme-toggle";
 import { GrTwitter } from "react-icons/gr";
+import NextTopLoader from "nextjs-toploader";
+
 const fontHeading = Manrope({
   subsets: ["latin"],
   display: "swap",
@@ -32,6 +34,7 @@ export default async function Layout({
       <body
         className={cn("antialiased", fontHeading.variable, fontBody.variable)}
       >
+        <NextTopLoader color="purple" height={3} />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {session ? (
             <>
