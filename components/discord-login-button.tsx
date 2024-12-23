@@ -12,8 +12,8 @@ export default function DiscordLoginButton({
 }) {
   const router = useRouter();
 
-  const onClick = () => {
-    loginWithGoogle();
+  const onClick = async () => {
+    await loginWithGoogle();
   };
 
   return (

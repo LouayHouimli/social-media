@@ -3,15 +3,13 @@ import type { NextAuthConfig } from "next-auth";
 import NextAuth, { User } from "next-auth";
 import { encode as defaultEncode } from "next-auth/jwt";
 import Credentials from "next-auth/providers/credentials";
-import Discord from "next-auth/providers/discord";
-import Facebook from "next-auth/providers/facebook";
+
 import Github from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import Passkey from "next-auth/providers/passkey";
 import { v4 as uuid } from "uuid";
 import { getUserFromDb } from "./actions/user.actions";
 import { db } from "./lib/db";
-import { Session } from "next-auth";
 
 import {
   accountsTable,
@@ -28,26 +26,11 @@ const adapter = DrizzleAdapter(db, {
   sessionsTable,
   verificationTokensTable,
 });
-
-const authConfig: NextAuthConfig = {
+export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter,
   providers: [
-    Github({
-      clientId: process.env.GITHUB_ID!,
-      clientSecret: process.env.GITHUB_SECRET!,
-    }),
-    Google({
-      clientId: process.env.GOOGLE_ID!,
-      clientSecret: process.env.GOOGLE_SECRET!,
-    }),
-    Facebook({
-      clientId: process.env.FACEBOOK_ID!,
-      clientSecret: process.env.FACEBOOK_SECRET!,
-    }),
-    Discord({
-      clientId: process.env.DISCORD_CLIENT_ID!,
-      clientSecret: process.env.DISCORD_CLIENT_SECRET!,
-    }),
+    Github,
+    Google,
     Credentials({
       credentials: {
         email: {},
@@ -67,10 +50,9 @@ const authConfig: NextAuthConfig = {
     Passkey,
   ],
   callbacks: {
-    async session({ session }: { session: Session }) {
-      const user = session.user as { password?: string };
+    async session({ session }) {
+      const user = session.user;
       delete user.password;
-
       return session;
     },
     async jwt({ token, user, account }) {
@@ -106,6 +88,4 @@ const authConfig: NextAuthConfig = {
   },
   secret: process.env.AUTH_SECRET!,
   experimental: { enableWebAuthn: true },
-};
-
-export const { handlers, signIn, signOut, auth } = NextAuth(authConfig);
+});

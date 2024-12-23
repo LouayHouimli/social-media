@@ -23,13 +23,12 @@ import GithubLoginButton from "./github-login-button";
 import PasskeyLoginButton from "./passkey-login-button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { toast } from "./ui/use-toast";
-
-export default function SignIn({
-  setIsOpened,
-}: {
-  setIsOpened?: (isOpened: boolean) => void;
-}) {
+import { useState } from "react";
+export default function SignIn() {
   const router = useRouter();
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
@@ -40,9 +39,11 @@ export default function SignIn({
   });
 
   async function onSubmit(data: z.infer<typeof LoginSchema>) {
+    setIsLoading(true);
     const res = await login(data);
 
     if (res.success) {
+      setSuccess(true);
       toast({
         description: res.message,
         variant: "default",
@@ -54,6 +55,7 @@ export default function SignIn({
         variant: "destructive",
       });
     }
+    setIsLoading(false);
   }
 
   return (
@@ -109,14 +111,7 @@ export default function SignIn({
               <Button
                 type="button"
                 onClick={() => {
-                  if (setIsOpened) {
-                    // this comes from an intercepted route
-                    setIsOpened(false);
-                    // i can do a soft navigation to see the modal
-                    router.replace("/signup");
-                  } else {
-                    window.location.replace("/signup"); // will cause a full page reload
-                  }
+                  router.push("/signup");
                 }}
                 className="underline text-gray-500 px-0"
                 variant={"link"}
@@ -124,7 +119,9 @@ export default function SignIn({
                 Don{"'"}t have an account? Sign up
               </Button>
             </div>
-            <Button type="submit">Login</Button>
+            <Button disabled={isLoading || success} type="submit">
+              {isLoading || success ? "Logging in..." : "Login"}
+            </Button>
           </form>
         </Form>
       </CardContent>

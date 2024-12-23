@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import { signIn } from "next-auth/webauthn"
-import { useRouter } from "next/navigation"
-import { useRef } from "react"
-import { Button } from "./ui/button"
-import { Input } from "./ui/input"
-import { Label } from "./ui/label"
-import { toast } from "./ui/use-toast"
+import { signIn } from "next-auth/webauthn";
+import { useRouter } from "next/navigation";
+import { useRef } from "react";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { toast } from "./ui/use-toast";
 
 export default function PasskeyLoginButton({ label }: { label?: string }) {
-  const router = useRouter()
-  const emailRef = useRef<HTMLInputElement>(null)
+  const router = useRouter();
+  const emailRef = useRef<HTMLInputElement>(null);
   const onClick = async () => {
     // if label exists, meaning it's for sign up
     if (label) {
@@ -18,8 +18,8 @@ export default function PasskeyLoginButton({ label }: { label?: string }) {
         toast({
           description: "Email is required",
           variant: "destructive",
-        })
-        return
+        });
+        return;
       }
 
       await signIn("passkey", {
@@ -27,42 +27,42 @@ export default function PasskeyLoginButton({ label }: { label?: string }) {
         email: emailRef.current.value,
       })
         .then((res) => {
-          console.log("res", res)
+          console.log("res", res);
           if (res?.error) {
             toast({
               description: `Error: ${res.error}`,
-            })
+            });
           } else {
-            console.debug("else", res)
-            window.location.href = "/"
+            console.debug("else", res);
+            window.location.href = "/";
           }
         })
         .catch((error) => {
           toast({
             description: `Error: ${error}`,
-          })
-        })
+          });
+        });
     } else {
       await signIn("passkey", {
         redirect: false,
       })
         .then((res) => {
-          console.log(res)
+          console.log(res);
           if (res?.error) {
             toast({
               description: `Error: ${res.error}`,
-            })
+            });
           } else {
-            router.push("/")
+            router.push("/");
           }
         })
         .catch((error) => {
           toast({
             description: `Error: ${error}`,
-          })
-        })
+          });
+        });
     }
-  }
+  };
 
   return (
     <>
@@ -90,5 +90,5 @@ export default function PasskeyLoginButton({ label }: { label?: string }) {
         {label ? label : "Sign in with Passkey"}
       </Button>
     </>
-  )
+  );
 }

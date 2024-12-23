@@ -3,11 +3,13 @@
 import { signIn as signInWithPasskey } from "next-auth/webauthn";
 
 import { signIn, signOut } from "@/auth";
+
 import { db } from "@/lib/db";
 import { usersTable } from "@/lib/schema";
 import { LoginSchema } from "@/schemas/login-schema";
 import { RegisterSchema } from "@/schemas/register-schema";
 import { eq } from "drizzle-orm";
+import { redirect } from "next/navigation";
 
 import bcryptjs from "bcryptjs";
 import { revalidatePath } from "next/cache";
@@ -102,17 +104,14 @@ export async function loginWithDiscord() {
 
 export async function loginWithGoogle() {
   await signIn("google", {
-    redirect: true,
-    redirectTo: process.env.NEXT_PUBLIC_BASE_URL,
+    redirectTo: "/",
   });
 }
 
 export async function loginWithGithub() {
-  await signIn("github", {
-    redirect: true,
-    redirectTo: process.env.NEXT_PUBLIC_BASE_URL,
-  });
+  await signIn("github", { redirectTo: "/" });
 }
+
 export async function loginWithFacebook() {
   await signIn("facebook", {
     redirect: true,
@@ -181,6 +180,7 @@ export async function logout() {
     });
     return {
       success: true,
+      message: "Logout successfully",
     };
   } catch (error: any) {
     return {
@@ -188,43 +188,4 @@ export async function logout() {
       message: error.message,
     };
   }
-}
-
-export async function updateUser({ name, id }: { name: string; id: string }) {
-  // PUT request to https://66b2046a1ca8ad33d4f62740.mockapi.io/api/v1/users/:id
-  // with the name in the body
-  // return the response
-
-  const res = await fetch(
-    `https://66b2046a1ca8ad33d4f62740.mockapi.io/api/v1/users/${id}`,
-    {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name }),
-    }
-  );
-  const data = res.json();
-
-  revalidatePath("/");
-
-  return data;
-}
-
-export async function deleteUser(id: string) {
-  // DELETE request to https://66b2046a1ca8ad33d4f62740.mockapi.io/api/v1/users/:id
-  // return the response
-
-  const res = await fetch(
-    `https://66b2046a1ca8ad33d4f62740.mockapi.io/api/v1/users/${id}`,
-    {
-      method: "DELETE",
-    }
-  );
-  const data = res.json();
-
-  revalidatePath("/");
-
-  return data;
 }

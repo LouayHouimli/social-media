@@ -1,12 +1,12 @@
-"use client"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { zodResolver } from "@hookform/resolvers/zod"
+"use client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-import { useForm } from "react-hook-form"
-import { z } from "zod"
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
-import { register } from "@/actions/user.actions"
+import { register } from "@/actions/user.actions";
 import {
   Form,
   FormControl,
@@ -14,22 +14,18 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { toast } from "@/components/ui/use-toast"
-import { RegisterSchema } from "@/schemas/register-schema"
-import { useRouter } from "next/navigation"
-import DiscordLoginButton from "./discord-login-button"
-import FacebookLoginButton from "./facebook-login-button"
-import GithubLoginButton from "./github-login-button"
-import PasskeyLoginButton from "./passkey-login-button"
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
+} from "@/components/ui/form";
+import { toast } from "@/components/ui/use-toast";
+import { RegisterSchema } from "@/schemas/register-schema";
+import { useRouter } from "next/navigation";
+import DiscordLoginButton from "./discord-login-button";
+import FacebookLoginButton from "./facebook-login-button";
+import GithubLoginButton from "./github-login-button";
+import PasskeyLoginButton from "./passkey-login-button";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
-export default function SignUpForm({
-  setIsOpened,
-}: {
-  setIsOpened?: (isOpened: boolean) => void
-}) {
-  const router = useRouter()
+export default function SignUpForm() {
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
@@ -38,21 +34,17 @@ export default function SignUpForm({
       password: "",
       confirmPassword: "",
     },
-  })
+  });
 
   async function onSubmit(data: z.infer<typeof RegisterSchema>) {
-    const res = await register(data)
+    const res = await register(data);
     if (res.success) {
-      if (setIsOpened) {
-        setIsOpened(false)
-      }
-
-      router.replace("/signin")
+      router.push("/signin");
     } else {
       toast({
         description: res.message,
         variant: "destructive",
-      })
+      });
     }
   }
 
@@ -122,12 +114,7 @@ export default function SignUpForm({
               <Button
                 type="button"
                 onClick={() => {
-                  if (setIsOpened) {
-                    setIsOpened(false)
-                    router.replace("/signin")
-                  } else {
-                    window.location.replace("/signin")
-                  }
+                  router.push("/signin");
                 }}
                 className="underline text-gray-500 px-0"
                 variant={"link"}
@@ -140,5 +127,5 @@ export default function SignUpForm({
         </Form>
       </CardContent>
     </Card>
-  )
+  );
 }

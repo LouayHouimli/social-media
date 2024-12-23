@@ -7,6 +7,7 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 import type { AdapterAccountType } from "next-auth/adapters";
+import { title } from "process";
 
 export const usersTable = pgTable("users", {
   id: text("id")
@@ -16,9 +17,27 @@ export const usersTable = pgTable("users", {
   password: text("password"),
   nickname: text("nickname"),
   isAdmin: boolean("isAdmin").default(false),
-  name: text("name"),
+  name: text("name").$defaultFn(
+    () => `User-${crypto.randomUUID().slice(0, 8)}`
+  ),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
+});
+
+export const postTable = pgTable("posts", {
+  id: text("postId")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  title: text("postTitle").notNull(),
+  content: text("postContent").notNull(),
+  author: text("authorId")
+    .notNull()
+    .references(() => usersTable.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
 });
 
 export const accountsTable = pgTable(
