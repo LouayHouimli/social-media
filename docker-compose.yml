@@ -1,15 +1,53 @@
 services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_BASE_URL=http://localhost
+      - NEXTAUTH_URL=http://localhost
+      - NEXTAUTH_SECRET=+H9qFAUGf9C21AlM2piH6oQRraRfgsUJViRsG4eOXkY=
+      - DB_URL=postgres://louay:louay@db:5432/louaydb
+      - AUTH_SECRET=+H9qFAUGf9C21AlM2piH6oQRraRfgsUJViRsG4eOXkY=
+      - AUTH_GITHUB_ID=Ov23liJVJVP5g6598YC0
+      - AUTH_GITHUB_SECRET=ca338d903ccddc41d9029e99d1df0e0cd6e76c53
+      - AUTH_GOOGLE_ID=77466076279-n5r42dfpgans1f25j11ppn7cgj997r81.apps.googleusercontent.com
+      - AUTH_GOOGLE_SECRET=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
+    depends_on:
+      - db
+    networks:
+      - my_network
+
   db:
     image: postgres:latest
-    restart: always
     environment:
-      - POSTGRES_USER=louay
-      - POSTGRES_PASSWORD=louay
-      - POSTGRES_DB=nextauth_db
+      POSTGRES_USER: louay
+      POSTGRES_PASSWORD: louay
+      POSTGRES_DB: louaydb
     ports:
-      - "5433:5432"
+      - "5432:5432"
     volumes:
-      - nextauth_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - my_network
+
+  cron:
+    image: alpine/curl
+    command: >
+      sh -c "
+        echo '*/10 * * * * curl -X POST http://web:3000/db/clear' > /etc/crontabs/root && \
+        crond -f -l 2
+      "
+    depends_on:
+      - web
+    networks:
+      - my_network
 
 volumes:
-  nextauth_data:
+  postgres_data:
+
+networks:
+  my_network:
+    name: my_network
+    driver: bridge

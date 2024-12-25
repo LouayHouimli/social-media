@@ -11,17 +11,11 @@ import { ModeToggle } from "@/components/theme-toggle";
 import { GrTwitter } from "react-icons/gr";
 import NextTopLoader from "nextjs-toploader";
 
-const fontHeading = Manrope({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-heading",
-});
-
-const fontBody = Manrope({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-body",
-});
+const manrope = Manrope({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-manrope',
+})
 
 export default async function Layout({
   children,
@@ -30,9 +24,9 @@ export default async function Layout({
 }) {
   const session = await auth();
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={manrope.variable}>
       <body
-        className={cn("antialiased", fontHeading.variable, fontBody.variable)}
+        className={cn("antialiased font-sans")}
       >
         <NextTopLoader color="purple" height={3} />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>

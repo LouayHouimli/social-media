@@ -1,11 +1,10 @@
 "use client";
 
 import React from "react";
-import { Button } from "./button";
+import { Button } from "@/components/ui/button";
 import { deletePost } from "@/actions/post.actions";
-import { toast } from "./use-toast";
 import { useState } from "react";
-
+import { toast } from "@/components/ui/use-toast";
 function DeleteButton({ postId }: { postId: string }) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [successD, setSuccessD] = useState(false);

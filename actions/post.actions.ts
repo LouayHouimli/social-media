@@ -45,6 +45,7 @@ export const getPosts = async (): Promise<PostProps[]> => {
       authorAdmin: usersTable.isAdmin,
       authorName: usersTable.name,
       authorImage: usersTable.image,
+      likes: postTable.likes,
     })
     .from(postTable)
     .innerJoin(usersTable, eq(usersTable.id, postTable.author))
@@ -101,6 +102,40 @@ export const updatePost = async (
     return {
       success: false,
       message: error.message || "An unknown error occurred",
+    };
+  }
+};
+export const likePost = async (postId: string) => {
+  const session = await auth();
+  if (!session) {
+    return {
+      success: false,
+      message: "You must be logged in to like a post",
+    };
+  }
+  const userId = session.user.id;
+  const [post] = await db
+    .select()
+    .from(postTable)
+    .where(eq(postTable.id, postId));
+  if (!post) {
+    return {
+      success: false,
+      message: "Post not found",
+    };
+  }
+
+  const res = await db
+    .update(postTable)
+    .set({
+      likes: post?.likes ? post.likes + 1 : 1,
+    })
+    .where(eq(postTable.id, postId));
+  if (res) {
+    revalidatePath("/");
+    return {
+      success: true,
+      message: "Post liked successfully",
     };
   }
 };

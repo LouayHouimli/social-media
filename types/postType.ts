@@ -4,6 +4,7 @@ export interface PostProps {
   content: string;
   createdAt: Date;
   updatedAt: Date;
+  likes: number | null;
   authorAdmin: boolean | null;
   authorId: string | null;
   authorName: string | null;

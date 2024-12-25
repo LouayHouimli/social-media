@@ -20,6 +20,7 @@ export const usersTable = pgTable("users", {
   name: text("name").$defaultFn(
     () => `User-${crypto.randomUUID().slice(0, 8)}`
   ),
+  likedPosts: text("likedPosts").array(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
 });
@@ -30,6 +31,7 @@ export const postTable = pgTable("posts", {
     .$defaultFn(() => crypto.randomUUID()),
   title: text("postTitle").notNull(),
   content: text("postContent").notNull(),
+  likes: integer("likes").default(0),
   author: text("authorId")
     .notNull()
     .references(() => usersTable.id, { onDelete: "cascade" }),

@@ -13,8 +13,20 @@ import { BiRepost } from "react-icons/bi";
 import { AiOutlineRetweet } from "react-icons/ai";
 import { BsThreeDots } from "react-icons/bs";
 import { DialogDemo } from "./edit-dialog";
+import { likePost } from "@/actions/post.actions";
+import { toast } from "./ui/use-toast";
+import LikeBtn from "./like-btn";
 
 async function Posts({ posts }: { posts: PostProps[] }) {
+  const handleLike = async (postId: string) => {
+    const res = await likePost(postId);
+    if (res?.success) {
+      toast({
+        title: res.message,
+        variant: "default",
+      });
+    }
+  };
   const session = await auth();
   if (!session) {
     redirect("/signin");
@@ -51,7 +63,10 @@ async function Posts({ posts }: { posts: PostProps[] }) {
 
           <div className="flex my-2 px-2 flex-row items-center justify-between">
             <FaRegComment />
-            <FaRegHeart />
+            <div className="flex flex-row items-center gap-x-1">
+              <LikeBtn postId={post.id} />
+              <p className="text-sm">{post.likes}</p>
+            </div>
             <AiOutlineRetweet className="w-5 h-5 " />
           </div>
         </Card>

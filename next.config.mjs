@@ -8,6 +8,15 @@ const nextConfig = {
       },
     ],
   },
+  output: "standalone",
+  optimizeFonts: false,
+  webpack: (config) => {
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      "@vercel/turbopack-next": false,
+    };
+    return config;
+  },
 };
 
 export default nextConfig;
